@@ -98,108 +98,129 @@ class Window(QWidget):
     def click_event_1(self):
         global a
         self.le.setText(self.le.text() + '1')
+        a = a + '1'
 
     def click_event_2(self):
+        global a
         self.le.setText(self.le.text() + '2')
+        a = a + '2'
 
     def click_event_3(self):
+        global a
         self.le.setText(self.le.text() + '3')
+        a = a + '3'
 
     def click_event_4(self):
+        global a
         self.le.setText(self.le.text() + '4')
+        a = a + '4'
 
     def click_event_5(self):
+        global a
         self.le.setText(self.le.text() + '5')
+        a = a + '5'
 
     def click_event_6(self):
+        global a
         self.le.setText(self.le.text() + '6')
+        a = a + '6'
 
     def click_event_7(self):
+        global a
         self.le.setText(self.le.text() + '7')
+        a = a + '7'
 
     def click_event_8(self):
+        global a
         self.le.setText(self.le.text() + '8')
+        a = a + '8'
 
     def click_event_9(self):
+        global a
         self.le.setText(self.le.text() + '9')
+        a = a + '9'
 
     def click_event_0(self):
+        global a
         self.le.setText(self.le.text() + '0')
+        a = a + '0'
 
     def click_event_s(self):
-        global calc, pr
+        global calc, pr, a
         if pr == 0:
-            calc += int(self.le.text())
+            calc += int(a)
         elif pr == 1:
-            calc += int(self.le.text())
+            calc += int(a)
         elif pr == 2:
-            calc -= int(self.le.text())
+            calc -= int(a)
         elif pr == 3:
-            calc *= int(self.le.text())
+            calc *= int(a)
         elif pr == 4:
-            calc //= int(self.le.text())
+            calc //= int(a)
+        self.le.setText(self.le.text() + '+')
         pr = 1
-        self.le.setText('')
+        a = ''
 
     def click_event_r(self):
-        global calc, pr
+        global calc, pr, a
         if pr == 0:
-            calc += int(self.le.text())
+            calc += int(a)
         elif pr == 1:
-            calc += int(self.le.text())
+            calc += int(a)
         elif pr == 2:
-            calc -= int(self.le.text())
+            calc -= int(a)
         elif pr == 3:
-            calc *= int(self.le.text())
+            calc *= int(a)
         elif pr == 4:
-            calc //= int(self.le.text())
+            calc //= int(a)
+        self.le.setText(self.le.text() + '-')
         pr = 2
-        self.le.setText('')
+        a = ''
 
     def click_event_y(self):
-        global calc, pr
+        global calc, pr, a
         if pr == 0:
-            calc += int(self.le.text())
+            calc += int(a)
         elif pr == 1:
-            calc += int(self.le.text())
+            calc += int(a)
         elif pr == 2:
-            calc -= int(self.le.text())
+            calc -= int(a)
         elif pr == 3:
-            calc *= int(self.le.text())
+            calc *= int(a)
         elif pr == 4:
-            calc //= int(self.le.text())
+            calc //= int(a)
+        self.le.setText(self.le.text() + '*')
         pr = 3
-        self.le.setText('')
+        a = ''
 
     def click_event_d(self):
-        global calc, pr
+        global calc, pr, a
         if pr == 0:
-            calc += int(self.le.text())
+            calc += int(a)
         elif pr == 1:
-            calc += int(self.le.text())
+            calc += int(a)
         elif pr == 2:
-            calc -= int(self.le.text())
+            calc -= int(a)
         elif pr == 3:
-            calc *= int(self.le.text())
+            calc *= int(a)
         elif pr == 4:
-            calc //= int(self.le.text())
+            calc //= int(a)
+        self.le.setText(self.le.text() + '/')
         pr = 4
-        self.le.setText('')
+        a = ''
 
     def equal_click_event(self):
-        global calc, pr
+        global calc, pr, a
         if pr == 0:
-            calc += int(self.le.text())
+            calc += int(a)
         elif pr == 1:
-            calc += int(self.le.text())
+            calc += int(a)
         elif pr == 2:
-            calc -= int(self.le.text())
+            calc -= int(a)
         elif pr == 3:
-            calc *= int(self.le.text())
+            calc *= int(a)
         elif pr == 4:
-            calc //= int(self.le.text())
-        pr = 0
-        calc = 0
+            calc //= int(a)
         self.le.setText(str(calc))
 
 
