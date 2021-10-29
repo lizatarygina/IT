@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QApplication, QWidget, QLineEdit, QLabel, QPushButton
+from PyQt5.QtWidgets import QApplication, QWidget, QLineEdit, QPushButton
 import sys
 
 calc = 0
@@ -6,9 +6,26 @@ pr = 0
 a = ''
 
 
+def prov():
+    global calc, pr, a
+    if pr == 0:
+        calc += int(a)
+    elif pr == 1:
+        calc += int(a)
+    elif pr == 2:
+        calc -= int(a)
+    elif pr == 3:
+        calc *= int(a)
+    elif pr == 4:
+        calc //= int(a)
+    a = ''
+
+
 class Window(QWidget):
+
     def __init__(self):
         super(Window, self).__init__()
+        self.btnc = QPushButton(self)
         self.btnr = QPushButton(self)
         self.btns = QPushButton(self)
         self.btny = QPushButton(self)
@@ -24,16 +41,15 @@ class Window(QWidget):
         self.btn2 = QPushButton(self)
         self.btn1 = QPushButton(self)
         self.btn = QPushButton(self)
-        self.lbl = QLabel(self)
         self.le = QLineEdit(self)
         self.set_ui()
 
     def set_ui(self):
         self.setGeometry(200, 200, 210, 250)
-        self.setWindowTitle('Window')
+        self.setWindowTitle('Калькулятор')
         self.le.setGeometry(30, 70, 120, 30)
 
-        self.btn.setGeometry(150, 70, 30, 150)
+        self.btn.setGeometry(150, 100, 30, 120)
         self.btn.setText('=')
         self.btn.clicked.connect(self.equal_click_event)
 
@@ -93,6 +109,10 @@ class Window(QWidget):
         self.btnd.setText('/')
         self.btnd.clicked.connect(self.click_event_d)
 
+        self.btnc.setGeometry(150, 70, 30, 30)
+        self.btnc.setText('C')
+        self.btnd.clicked.connect(self.click_event_c)
+
         self.show()
 
     def click_event_1(self):
@@ -146,82 +166,43 @@ class Window(QWidget):
         a = a + '0'
 
     def click_event_s(self):
-        global calc, pr, a
-        if pr == 0:
-            calc += int(a)
-        elif pr == 1:
-            calc += int(a)
-        elif pr == 2:
-            calc -= int(a)
-        elif pr == 3:
-            calc *= int(a)
-        elif pr == 4:
-            calc //= int(a)
+        global pr, a
+        prov()
         self.le.setText(self.le.text() + '+')
         pr = 1
-        a = ''
 
     def click_event_r(self):
-        global calc, pr, a
-        if pr == 0:
-            calc += int(a)
-        elif pr == 1:
-            calc += int(a)
-        elif pr == 2:
-            calc -= int(a)
-        elif pr == 3:
-            calc *= int(a)
-        elif pr == 4:
-            calc //= int(a)
+        global pr, a
+        prov()
         self.le.setText(self.le.text() + '-')
         pr = 2
-        a = ''
 
     def click_event_y(self):
-        global calc, pr, a
-        if pr == 0:
-            calc += int(a)
-        elif pr == 1:
-            calc += int(a)
-        elif pr == 2:
-            calc -= int(a)
-        elif pr == 3:
-            calc *= int(a)
-        elif pr == 4:
-            calc //= int(a)
+        global pr, a
+        prov()
         self.le.setText(self.le.text() + '*')
         pr = 3
-        a = ''
 
     def click_event_d(self):
-        global calc, pr, a
-        if pr == 0:
-            calc += int(a)
-        elif pr == 1:
-            calc += int(a)
-        elif pr == 2:
-            calc -= int(a)
-        elif pr == 3:
-            calc *= int(a)
-        elif pr == 4:
-            calc //= int(a)
+        global pr, a
+        prov()
         self.le.setText(self.le.text() + '/')
         pr = 4
+
+    def click_event_c(self):
+        global pr, a, calc
+        self.le.setText('')
+        calc = 0
+        pr = 0
         a = ''
 
     def equal_click_event(self):
-        global calc, pr, a
-        if pr == 0:
-            calc += int(a)
-        elif pr == 1:
-            calc += int(a)
-        elif pr == 2:
-            calc -= int(a)
-        elif pr == 3:
-            calc *= int(a)
-        elif pr == 4:
-            calc //= int(a)
+        global pr, a, calc
+        prov()
         self.le.setText(str(calc))
+        pr = 0
+        a = str(calc)
+        calc = 0
 
 
 if __name__ == '__main__':
