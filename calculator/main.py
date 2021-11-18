@@ -85,25 +85,25 @@ class Window(QWidget):
         calc = 0
 
     def click_event_p(self):
-        global pd, numb
+        global pd
         prov()
         self.le.setText(self.le.text() + '+')
         pd = 1
 
     def click_event_m(self):
-        global pd, numb
+        global pd
         prov()
         self.le.setText(self.le.text() + '-')
         pd = 2
 
     def click_event_y(self):
-        global pd, numb
+        global pd
         prov()
         self.le.setText(self.le.text() + '*')
         pd = 3
 
     def click_event_d(self):
-        global pd, numb
+        global pd
         prov()
         self.le.setText(self.le.text() + '/')
         pd = 4
