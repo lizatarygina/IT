@@ -11,9 +11,17 @@ cursor = conn.cursor()
 
 day = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Субботу', 'Воскресенье']
 
-d1 = datetime.datetime.strptime("01-09-2021", "%d-%m-%Y")
+if datetime.datetime.now().month > 8:
+    d1 = datetime.datetime.strptime("01-09-" + str(datetime.datetime.now().year), "%d-%m-%Y")
+else:
+    d1 = datetime.datetime.strptime("31-01-" + str(datetime.datetime.now().year), "%d-%m-%Y")
 d2 = datetime.datetime.strptime(str(datetime.datetime.date(datetime.datetime.now())), "%Y-%m-%d")
-week_n = ceil(((d2 - d1).days + 3) / 7)
+if datetime.datetime.isoweekday(d1) < 5:
+    week_n = ceil(((d2 - d1).days + datetime.datetime.weekday(d1)) / 7)
+elif datetime.datetime.isoweekday(d1) == 6:
+    week_n = ceil(((d2 - d1).days - 2) / 7)
+elif datetime.datetime.isoweekday(d1) == 7:
+    week_n = ceil(((d2 - d1).days - 1) / 7)
 
 
 def menu(message):
@@ -41,41 +49,25 @@ def help_message(message):
 
 @bot.message_handler(content_types='text')
 def reply_message(message):
-    def choice_day():
-        markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-        btn1 = types.KeyboardButton('Понедельник')
-        btn2 = types.KeyboardButton('Вторник')
-        btn3 = types.KeyboardButton('Среда')
-        btn4 = types.KeyboardButton('Четверг')
-        btn5 = types.KeyboardButton('Пятница')
-        btn6 = types.KeyboardButton('Назад')
-        markup.add(btn1)
-        markup.add(btn2)
-        markup.add(btn3)
-        markup.add(btn4)
-        markup.add(btn5)
-        markup.add(btn6)
-        bot.send_message(message.chat.id, "Выбери день недели", reply_markup=markup)
+
+    def time_table(a, b):
+        cursor.execute(
+            "select time_table.subject, time_table.start_time, teacher.full_name from time_table join teacher on "
+            "teacher.subject = time_table.subject where day = '" + a + "' and (pos = '-' or pos = '" + b + "') "
+            "order by time_table.id;")
+        row = list(cursor.fetchall())
+        mess = ''
+        for i in row:
+            mess += str(i[0]) + ' '
+            mess += str(i[1]) + ' - '
+            mess += str(i[2]) + '\n '
+        bot.send_message(message.chat.id, mess)
 
     def week_pos(a):
         if week_n % 2 > 0:
-            cursor.execute(
-                "SELECT subject, start_time FROM time_table WHERE day = '" + a + "' and (pos = 'в' or pos = '-');")
-            row = list(cursor.fetchall())
-            mess = ''
-            for i in row:
-                mess += str(i[0]) + ' '
-                mess += str(i[1]) + '\n '
-            bot.send_message(message.chat.id, mess)
+            time_table(a, 'в')
         else:
-            cursor.execute(
-                "SELECT subject, start_time FROM time_table WHERE day = '" + a + "' and (pos = 'н' or pos = '-');")
-            row = list(cursor.fetchall())
-            mess = ''
-            for i in row:
-                mess += str(i[0]) + ' '
-                mess += str(i[1]) + '\n'
-            bot.send_message(message.chat.id, mess)
+            time_table(a, 'н')
 
     if message.text == "Расписание на сегодня":
         if datetime.datetime.weekday(datetime.datetime.now()) < 5:
@@ -94,7 +86,20 @@ def reply_message(message):
             bot.send_sticker(message.chat.id,
                              'CAACAgIAAxkBAAEDUrVhmCHu7coC0T2qWDhIejufAAFyc-UAAj8BAAIiN44ENDnV16oKRgEiBA')
     if message.text == "Расписание":
-        choice_day()
+        markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        btn1 = types.KeyboardButton('Понедельник')
+        btn2 = types.KeyboardButton('Вторник')
+        btn3 = types.KeyboardButton('Среда')
+        btn4 = types.KeyboardButton('Четверг')
+        btn5 = types.KeyboardButton('Пятница')
+        btn6 = types.KeyboardButton('Назад')
+        markup.add(btn1)
+        markup.add(btn2)
+        markup.add(btn3)
+        markup.add(btn4)
+        markup.add(btn5)
+        markup.add(btn6)
+        bot.send_message(message.chat.id, "Выбери день недели", reply_markup=markup)
     if message.text == "Понедельник":
         week_pos(day[0])
     if message.text == "Вторник":
