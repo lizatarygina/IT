@@ -43,13 +43,13 @@ class Window(QWidget):
         self.subject_gbox = QGroupBox("Предметы")
 
         self.svbox = QVBoxLayout()
-        self.shbox1 = QHBoxLayout()
+        self.shbox1 = QVBoxLayout()
         self.shbox2 = QHBoxLayout()
         self.svbox2 = QVBoxLayout()
-        self.shbox21 = QHBoxLayout()
+        self.shbox21 = QVBoxLayout()
         self.shbox22 = QHBoxLayout()
         self.svbox3 = QVBoxLayout()
-        self.shbox31 = QHBoxLayout()
+        self.shbox31 = QVBoxLayout()
         self.shbox32 = QHBoxLayout()
 
         self.svbox.addLayout(self.shbox1)
@@ -96,6 +96,7 @@ class Window(QWidget):
 
         self.monday_table.setColumnCount(6)
         self.monday_table.setHorizontalHeaderLabels(["Позиция", "Предмет", "Время", "ID", "", ""])
+        self.monday_table.hideColumn(3)
 
         self._update_monday_table()
 
@@ -110,6 +111,7 @@ class Window(QWidget):
 
         self.tuesday_table.setColumnCount(6)
         self.tuesday_table.setHorizontalHeaderLabels(["Позиция", "Предмет", "Время", "ID", "", ""])
+        self.tuesday_table.hideColumn(3)
 
         self._update_tuesday_table()
 
@@ -124,6 +126,7 @@ class Window(QWidget):
 
         self.wednesday_table.setColumnCount(6)
         self.wednesday_table.setHorizontalHeaderLabels(["Позиция", "Предмет", "Время", "ID", "", ""])
+        self.wednesday_table.hideColumn(3)
 
         self._update_wednesday_table()
 
@@ -138,6 +141,7 @@ class Window(QWidget):
 
         self.thursday_table.setColumnCount(6)
         self.thursday_table.setHorizontalHeaderLabels(["Позиция", "Предмет", "Время", "ID", "", ""])
+        self.thursday_table.hideColumn(3)
 
         self._update_thursday_table()
 
@@ -152,6 +156,7 @@ class Window(QWidget):
 
         self.friday_table.setColumnCount(6)
         self.friday_table.setHorizontalHeaderLabels(["Позиция", "Предмет", "Время", "ID", "", ""])
+        self.friday_table.hideColumn(3)
 
         self._update_friday_table()
 
@@ -166,6 +171,7 @@ class Window(QWidget):
 
         self.teacher_table.setColumnCount(5)
         self.teacher_table.setHorizontalHeaderLabels(["Имя", "Предмет", "ID", "", ""])
+        self.teacher_table.hideColumn(2)
 
         self._update_teacher_table()
 
@@ -192,7 +198,7 @@ class Window(QWidget):
             "select pos, subject, start_time, id from time_table where day = 'Пн' order by id;")
         records = list(self.cursor.fetchall())
 
-        self.monday_table.setRowCount(len(records)+1)
+        self.monday_table.setRowCount(len(records) + 1)
 
         for i, r in enumerate(records):
             r = list(r)
@@ -207,8 +213,14 @@ class Window(QWidget):
             self.monday_table.setCellWidget(i, 5, delbtn)
             delbtn.clicked.connect(lambda checked=None, j=i: self._del_from_time_table(j, self.monday_table))
             addbtn = QPushButton("Добавить")
-            self.monday_table.setCellWidget(i+1, 4, addbtn)
-            addbtn.clicked.connect(lambda checked=None, j=i+1: self._add_time_table(j, self.monday_table))
+            self.monday_table.setItem(i + 1, 0, QTableWidgetItem(''))
+            self.monday_table.setItem(i + 1, 1, QTableWidgetItem(''))
+            self.monday_table.setItem(i + 1, 2, QTableWidgetItem(''))
+            self.monday_table.setItem(i + 1, 3, QTableWidgetItem(''))
+            self.monday_table.removeCellWidget(i + 1, 4)
+            self.monday_table.removeCellWidget(i + 1, 5)
+            self.monday_table.setCellWidget(i + 1, 4, addbtn)
+            addbtn.clicked.connect(lambda checked=None, j=i + 1: self._add_time_table(j, self.monday_table))
 
         self.monday_table.resizeRowsToContents()
 
@@ -217,7 +229,7 @@ class Window(QWidget):
             "select pos, subject, start_time, id from time_table where day = 'Вт' order by id;")
         records = list(self.cursor.fetchall())
 
-        self.tuesday_table.setRowCount(len(records)+1)
+        self.tuesday_table.setRowCount(len(records) + 1)
 
         for i, r in enumerate(records):
             r = list(r)
@@ -231,9 +243,15 @@ class Window(QWidget):
             delbtn = QPushButton("Удалить")
             self.tuesday_table.setCellWidget(i, 5, delbtn)
             delbtn.clicked.connect(lambda checked=None, j=i: self._del_from_time_table(j, self.tuesday_table))
+            self.tuesday_table.setItem(i + 1, 0, QTableWidgetItem(''))
+            self.tuesday_table.setItem(i + 1, 1, QTableWidgetItem(''))
+            self.tuesday_table.setItem(i + 1, 2, QTableWidgetItem(''))
+            self.tuesday_table.setItem(i + 1, 3, QTableWidgetItem(''))
+            self.tuesday_table.removeCellWidget(i + 1, 4)
+            self.tuesday_table.removeCellWidget(i + 1, 5)
             addbtn = QPushButton("Добавить")
-            self.tuesday_table.setCellWidget(i+1, 4, addbtn)
-            addbtn.clicked.connect(lambda checked=None, j=i+1: self._add_time_table(j, self.tuesday_table))
+            self.tuesday_table.setCellWidget(i + 1, 4, addbtn)
+            addbtn.clicked.connect(lambda checked=None, j=i + 1: self._add_time_table(j, self.tuesday_table))
         self.tuesday_table.resizeRowsToContents()
 
     def _update_wednesday_table(self):
@@ -241,7 +259,7 @@ class Window(QWidget):
             "select pos, subject, start_time, id from time_table where day = 'Ср' order by id;")
         records = list(self.cursor.fetchall())
 
-        self.wednesday_table.setRowCount(len(records)+1)
+        self.wednesday_table.setRowCount(len(records) + 1)
 
         for i, r in enumerate(records):
             r = list(r)
@@ -255,9 +273,15 @@ class Window(QWidget):
             delbtn = QPushButton("Удалить")
             self.wednesday_table.setCellWidget(i, 5, delbtn)
             delbtn.clicked.connect(lambda checked=None, j=i: self._del_from_time_table(j, self.wednesday_table))
+            self.wednesday_table.setItem(i + 1, 0, QTableWidgetItem(''))
+            self.wednesday_table.setItem(i + 1, 1, QTableWidgetItem(''))
+            self.wednesday_table.setItem(i + 1, 2, QTableWidgetItem(''))
+            self.wednesday_table.setItem(i + 1, 3, QTableWidgetItem(''))
+            self.wednesday_table.removeCellWidget(i + 1, 4)
+            self.wednesday_table.removeCellWidget(i + 1, 5)
             addbtn = QPushButton("Добавить")
-            self.wednesday_table.setCellWidget(i+1, 4, addbtn)
-            addbtn.clicked.connect(lambda checked=None, j=i+1: self._add_time_table(j, self.wednesday_table))
+            self.wednesday_table.setCellWidget(i + 1, 4, addbtn)
+            addbtn.clicked.connect(lambda checked=None, j=i + 1: self._add_time_table(j, self.wednesday_table))
 
         self.wednesday_table.resizeRowsToContents()
 
@@ -266,7 +290,7 @@ class Window(QWidget):
             "select pos, subject, start_time, id from time_table where day = 'Чт' order by id;")
         records = list(self.cursor.fetchall())
 
-        self.thursday_table.setRowCount(len(records)+1)
+        self.thursday_table.setRowCount(len(records) + 1)
 
         for i, r in enumerate(records):
             r = list(r)
@@ -280,9 +304,15 @@ class Window(QWidget):
             delbtn = QPushButton("Удалить")
             self.thursday_table.setCellWidget(i, 5, delbtn)
             delbtn.clicked.connect(lambda checked=None, j=i: self._del_from_time_table(j, self.thursday_table))
+            self.thursday_table.setItem(i + 1, 0, QTableWidgetItem(''))
+            self.thursday_table.setItem(i + 1, 1, QTableWidgetItem(''))
+            self.thursday_table.setItem(i + 1, 2, QTableWidgetItem(''))
+            self.thursday_table.setItem(i + 1, 3, QTableWidgetItem(''))
+            self.thursday_table.removeCellWidget(i + 1, 4)
+            self.thursday_table.removeCellWidget(i + 1, 5)
             addbtn = QPushButton("Добавить")
-            self.thursday_table.setCellWidget(i+1, 4, addbtn)
-            addbtn.clicked.connect(lambda checked=None, j=i+1: self._add_time_table(j, self.thursday_table))
+            self.thursday_table.setCellWidget(i + 1, 4, addbtn)
+            addbtn.clicked.connect(lambda checked=None, j=i + 1: self._add_time_table(j, self.thursday_table))
 
         self.thursday_table.resizeRowsToContents()
 
@@ -291,7 +321,7 @@ class Window(QWidget):
             "select pos, subject, start_time, id from time_table where day = 'Пт';")
         records = list(self.cursor.fetchall())
 
-        self.friday_table.setRowCount(len(records)+1)
+        self.friday_table.setRowCount(len(records) + 1)
 
         for i, r in enumerate(records):
             r = list(r)
@@ -305,9 +335,15 @@ class Window(QWidget):
             delbtn = QPushButton("Удалить")
             self.friday_table.setCellWidget(i, 5, delbtn)
             delbtn.clicked.connect(lambda checked=None, j=i: self._del_from_time_table(j, self.friday_table))
+            self.friday_table.setItem(i + 1, 0, QTableWidgetItem(''))
+            self.friday_table.setItem(i + 1, 1, QTableWidgetItem(''))
+            self.friday_table.setItem(i + 1, 2, QTableWidgetItem(''))
+            self.friday_table.setItem(i + 1, 3, QTableWidgetItem(''))
+            self.friday_table.removeCellWidget(i + 1, 4)
+            self.friday_table.removeCellWidget(i + 1, 5)
             addbtn = QPushButton("Добавить")
-            self.friday_table.setCellWidget(i+1, 4, addbtn)
-            addbtn.clicked.connect(lambda checked=None, j=i+1: self._add_time_table(j, self.friday_table))
+            self.friday_table.setCellWidget(i + 1, 4, addbtn)
+            addbtn.clicked.connect(lambda checked=None, j=i + 1: self._add_time_table(j, self.friday_table))
 
         self.friday_table.resizeRowsToContents()
 
@@ -316,7 +352,7 @@ class Window(QWidget):
             "select full_name, subject, id from teacher;")
         records = list(self.cursor.fetchall())
 
-        self.teacher_table.setRowCount(len(records)+1)
+        self.teacher_table.setRowCount(len(records) + 1)
 
         for i, r in enumerate(records):
             r = list(r)
@@ -329,16 +365,23 @@ class Window(QWidget):
             delbtn = QPushButton("Удалить")
             self.teacher_table.setCellWidget(i, 4, delbtn)
             delbtn.clicked.connect(lambda checked=None, j=i: self._del_from_teacher(j, self.teacher_table))
+            self.teacher_table.setItem(i + 1, 0, QTableWidgetItem(''))
+            self.teacher_table.setItem(i + 1, 1, QTableWidgetItem(''))
+            self.teacher_table.setItem(i + 1, 2, QTableWidgetItem(''))
+            self.teacher_table.setItem(i + 1, 3, QTableWidgetItem(''))
+            self.teacher_table.removeCellWidget(i + 1, 4)
+            self.teacher_table.removeCellWidget(i + 1, 5)
             addbtn = QPushButton("Добавить")
-            self.teacher_table.setCellWidget(i+1, 3, addbtn)
-            addbtn.clicked.connect(lambda checked=None, j=i+1: self._add_teacher(j, self.teacher_table))
+            self.teacher_table.setItem(i + 1, 0, QTableWidgetItem(''))
+            self.teacher_table.setCellWidget(i + 1, 3, addbtn)
+            addbtn.clicked.connect(lambda checked=None, j=i + 1: self._add_teacher(j, self.teacher_table))
 
     def _update_subject_table(self):
         self.cursor.execute(
             "select name from subject;")
         records = list(self.cursor.fetchall())
 
-        self.subject_table.setRowCount(len(records)+1)
+        self.subject_table.setRowCount(len(records) + 1)
 
         for i, r in enumerate(records):
             r = list(r)
@@ -346,9 +389,15 @@ class Window(QWidget):
             delbtn = QPushButton("Удалить")
             self.subject_table.setCellWidget(i, 1, delbtn)
             delbtn.clicked.connect(lambda checked=None, j=i: self._del_from_subject(j, self.subject_table))
+            self.subject_table.setItem(i + 1, 0, QTableWidgetItem(''))
+            self.subject_table.setItem(i + 1, 1, QTableWidgetItem(''))
+            self.subject_table.setItem(i + 1, 2, QTableWidgetItem(''))
+            self.subject_table.setItem(i + 1, 3, QTableWidgetItem(''))
+            self.subject_table.removeCellWidget(i + 1, 4)
+            self.subject_table.removeCellWidget(i + 1, 5)
             addbtn = QPushButton("Добавить")
-            self.subject_table.setCellWidget(i+1, 1, addbtn)
-            addbtn.clicked.connect(lambda checked=None, j=i+1: self._add_subject(j, self.subject_table))
+            self.subject_table.setCellWidget(i + 1, 1, addbtn)
+            addbtn.clicked.connect(lambda checked=None, j=i + 1: self._add_subject(j, self.subject_table))
 
     def _change_day_from_table(self, rown, a):
         row = list()
@@ -363,7 +412,7 @@ class Window(QWidget):
             self.cursor.execute("update time_table set start_time = '" + row[2] + "' where id = " + row[3] + ";")
             self.conn.commit()
         except:
-            QMessageBox(self, "Error", "Enter all fields")
+            QMessageBox.about(self, "Error", "Enter all fields")
 
     def _change_teacher_table(self, rown, a):
         row = list()
@@ -376,7 +425,7 @@ class Window(QWidget):
             self.cursor.execute("update teacher set full_name = '" + row[0] + "' where id = " + row[2] + ";")
             self.conn.commit()
         except:
-            QMessageBox(self, "Error", "Enter all fields")
+            QMessageBox.about(self, "Error", "Enter all fields")
 
     def _del_from_time_table(self, rown, a):
         row = list()
@@ -389,7 +438,12 @@ class Window(QWidget):
             self.cursor.execute("delete from time_table where id = " + row[3] + ";")
             self.conn.commit()
         except:
-            QMessageBox(self, "Error", "Enter all fields")
+            QMessageBox.about(self, "Error", "Enter all fields")
+        self._update_monday_table()
+        self._update_tuesday_table()
+        self._update_wednesday_table()
+        self._update_thursday_table()
+        self._update_friday_table()
 
     def _del_from_teacher(self, rown, a):
         row = list()
@@ -402,7 +456,8 @@ class Window(QWidget):
             self.cursor.execute("delete from teacher where id = " + row[2] + ";")
             self.conn.commit()
         except:
-            QMessageBox(self, "Error", "Enter all fields")
+            QMessageBox.about(self, "Error", "Enter all fields")
+        self._update_teacher_table()
 
     def _del_from_subject(self, rown, a):
         row = list()
@@ -415,46 +470,79 @@ class Window(QWidget):
             self.cursor.execute("delete from subject where name = '" + row[0] + "';")
             self.conn.commit()
         except:
-            QMessageBox(self, "Error", "Enter all fields")
+            QMessageBox.about(self, "Error", "Enter all fields")
+        self._update_subject_table()
 
     def _add_time_table(self, rown, a):
         row = list()
+        A = list()
         for i in range(a.columnCount()):
             try:
                 row.append(a.item(rown, i).text())
             except:
                 row.append(None)
-        try:
-            if a == self.monday_table:
-                self.cursor.execute("insert into time_table(day, pos, subject, start_time) values('Пн', '" + row[0] + "', '" + row[1] + "', '" + row[2] + "');")
-                self.conn.commit()
-            elif a == self.tuesday_table:
-                self.cursor.execute("insert into time_table(day, pos, subject, start_time) values('Вт', '" + row[0] + "', '" + row[1] + "', '" + row[2] + "');")
-                self.conn.commit()
-            elif a == self.wednesday_table:
-                self.cursor.execute("insert into time_table(day, pos, subject, start_time) values('Ср', '" + row[0] + "', '" + row[1] + "', '" + row[2] + "');")
-                self.conn.commit()
-            elif a == self.thursday_table:
-                self.cursor.execute("insert into time_table(day, pos, subject, start_time) values('Чт', '" + row[0] + "', '" + row[1] + "', '" + row[2] + "');")
-                self.conn.commit()
-            elif a == self.friday_table:
-                self.cursor.execute("insert into time_table(day, pos, subject, start_time) values('Пт', '" + row[0] + "', '" + row[1] + "', '" + row[2] + "');")
-                self.conn.commit()
-        except:
-            QMessageBox(self, "Error", "Enter all fields")
+        for i in range(self.subject_table.rowCount()):
+            try:
+                A.append(self.subject_table.item(i, 0).text())
+            except:
+                row.append(None)
+        if row[1] in A:
+            try:
+                if a == self.monday_table:
+                    self.cursor.execute(
+                        "insert into time_table(day, pos, subject, start_time) values('Пн', '" + row[0] + "', '" + row[
+                            1] + "', '" + row[2] + "');")
+                    self.conn.commit()
+                elif a == self.tuesday_table:
+                    self.cursor.execute(
+                        "insert into time_table(day, pos, subject, start_time) values('Вт', '" + row[0] + "', '" + row[
+                            1] + "', '" + row[2] + "');")
+                    self.conn.commit()
+                elif a == self.wednesday_table:
+                    self.cursor.execute(
+                        "insert into time_table(day, pos, subject, start_time) values('Ср', '" + row[0] + "', '" + row[
+                            1] + "', '" + row[2] + "');")
+                    self.conn.commit()
+                elif a == self.thursday_table:
+                    self.cursor.execute(
+                        "insert into time_table(day, pos, subject, start_time) values('Чт', '" + row[0] + "', '" + row[
+                            1] + "', '" + row[2] + "');")
+                    self.conn.commit()
+                elif a == self.friday_table:
+                    self.cursor.execute(
+                        "insert into time_table(day, pos, subject, start_time) values('Пт', '" + row[0] + "', '" + row[
+                            1] + "', '" + row[2] + "');")
+                    self.conn.commit()
+            except:
+                QMessageBox.about(self, "Error", "Enter all fields")
+            self._update_monday_table()
+            self._update_tuesday_table()
+            self._update_wednesday_table()
+            self._update_thursday_table()
+            self._update_friday_table()
+        else: QMessageBox.about(self, "Error", "Такого предмета нет в БД")
 
     def _add_teacher(self, rown, a):
+        A = list()
         row = list()
+        for i in range(self.subject_table.rowCount()):
+            try:
+                A.append(self.subject_table.item(i, 0).text())
+            except:
+                row.append(None)
         for i in range(a.columnCount()):
             try:
                 row.append(a.item(rown, i).text())
             except:
                 row.append(None)
-        try:
-            self.cursor.execute("insert into teacher(full_name, subject) values('" + row[0] + "', '" + row[1] + "');")
-            self.conn.commit()
-        except:
-            QMessageBox(self, "Error", "Enter all fields")
+        if row[1] in A:
+            try:
+                self.cursor.execute("insert into teacher(full_name, subject) values('" + row[0] + "', '" + row[1] + "');")
+                self.conn.commit()
+            except:
+                QMessageBox.about(self, "Error", "Enter all fields")
+            self._update_teacher_table()
+        else: QMessageBox.about(self, "Error", "Такого предмета нет в БД")
 
     def _add_subject(self, rown, a):
         row = list()
@@ -468,6 +556,7 @@ class Window(QWidget):
             self.conn.commit()
         except:
             QMessageBox(self, "Error", "Enter all fields")
+        self._update_subject_table()
 
     def _update_shedule(self):
         self._update_monday_table()

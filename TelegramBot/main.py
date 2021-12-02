@@ -60,7 +60,7 @@ def reply_message(message):
         for i in row:
             mess += str(i[0]) + ' '
             mess += str(i[1]) + ' - '
-            mess += str(i[2]) + '\n '
+            mess += str(i[2]) + '\n'
         bot.send_message(message.chat.id, mess)
 
     def week_pos(a):
