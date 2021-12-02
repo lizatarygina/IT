@@ -9,15 +9,15 @@ numb = ''
 def prov():
     global calc, pd, numb
     if pd == 0:
-        calc += int(numb)
+        calc += float(numb)
     elif pd == 1:
-        calc += int(numb)
+        calc += float(numb)
     elif pd == 2:
-        calc -= int(numb)
+        calc -= float(numb)
     elif pd == 3:
-        calc *= int(numb)
+        calc *= float(numb)
     elif pd == 4:
-        calc //= int(numb)
+        calc /= float(numb)
     numb = ''
 
 
@@ -46,7 +46,7 @@ class Window(QWidget):
             self.btn.clicked.connect(lambda checked=None, j=i: self.click_event(j))
 
         self.btne = QPushButton('=', self)
-        self.btne.setGeometry(120, 120, 40, 80)
+        self.btne.setGeometry(120, 160, 40, 40)
         self.btne.clicked.connect(self.click_event_e)
 
         self.btnp = QPushButton('+', self)
@@ -69,12 +69,21 @@ class Window(QWidget):
         self.btnc.setGeometry(120, 0, 40, 40)
         self.btnc.clicked.connect(self.click_event_c)
 
+        self.btnt = QPushButton('.', self)
+        self.btnt.setGeometry(120, 120, 40, 40)
+        self.btnt.clicked.connect(self.click_event_t)
+
         self.show()
 
     def click_event(self, j):
         global numb
         self.le.setText(self.le.text() + str(j))
         numb += str(j)
+
+    def click_event_t(self):
+        global numb
+        self.le.setText(self.le.text() + '.')
+        numb += '.'
 
     def click_event_e(self):
         global pd, numb, calc
