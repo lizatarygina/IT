@@ -195,7 +195,7 @@ class Window(QWidget):
 
     def _update_monday_table(self):
         self.cursor.execute(
-            "select pos, subject, start_time, id from time_table where day = 'Пн' order by id;")
+            "select pos, subject, start_time, id from time_table where day = 'Пн' order by start_time;")
         records = list(self.cursor.fetchall())
 
         self.monday_table.setRowCount(len(records) + 1)
@@ -226,7 +226,7 @@ class Window(QWidget):
 
     def _update_tuesday_table(self):
         self.cursor.execute(
-            "select pos, subject, start_time, id from time_table where day = 'Вт' order by id;")
+            "select pos, subject, start_time, id from time_table where day = 'Вт' order by start_time;")
         records = list(self.cursor.fetchall())
 
         self.tuesday_table.setRowCount(len(records) + 1)
@@ -256,7 +256,7 @@ class Window(QWidget):
 
     def _update_wednesday_table(self):
         self.cursor.execute(
-            "select pos, subject, start_time, id from time_table where day = 'Ср' order by id;")
+            "select pos, subject, start_time, id from time_table where day = 'Ср' order by start_time;")
         records = list(self.cursor.fetchall())
 
         self.wednesday_table.setRowCount(len(records) + 1)
@@ -287,7 +287,7 @@ class Window(QWidget):
 
     def _update_thursday_table(self):
         self.cursor.execute(
-            "select pos, subject, start_time, id from time_table where day = 'Чт' order by id;")
+            "select pos, subject, start_time, id from time_table where day = 'Чт' order by start_time;")
         records = list(self.cursor.fetchall())
 
         self.thursday_table.setRowCount(len(records) + 1)
@@ -318,7 +318,7 @@ class Window(QWidget):
 
     def _update_friday_table(self):
         self.cursor.execute(
-            "select pos, subject, start_time, id from time_table where day = 'Пт';")
+            "select pos, subject, start_time, id from time_table where day = 'Пт' order by start_time;")
         records = list(self.cursor.fetchall())
 
         self.friday_table.setRowCount(len(records) + 1)
@@ -406,13 +406,23 @@ class Window(QWidget):
                 row.append(a.item(rown, i).text())
             except:
                 row.append(None)
-        try:
-            self.cursor.execute("update time_table set pos = '" + row[0] + "' where id = " + row[3] + ";")
-            self.cursor.execute("update time_table set subject = '" + row[1] + "' where id = " + row[3] + "")
-            self.cursor.execute("update time_table set start_time = '" + row[2] + "' where id = " + row[3] + ";")
-            self.conn.commit()
-        except:
-            QMessageBox.about(self, "Error", "Enter all fields")
+        if row[0] == '-' or row[0] == 'н' or row[0] == 'в':
+            if row[2] == '9:30' or row[2] == '11:20' or row[2] == '13:10' or row[2] == '15:25' or row[2] == '17:15':
+                try:
+                    self.cursor.execute("update time_table set pos = '" + row[0] + "' where id = " + row[3] + ";")
+                    self.cursor.execute("update time_table set subject = '" + row[1] + "' where id = " + row[3] + "")
+                    self.cursor.execute("update time_table set start_time = '" + row[2] + "' where id = " + row[3] + ";")
+                    self.conn.commit()
+                except:
+                    QMessageBox.about(self, "Error", "Enter all fields")
+            else:
+                QMessageBox.about(self, "Error", "Введите стандартизированое время")
+        else: QMessageBox.about(self, "Error", "Введите положение недели 'в' - верхняя 'н' - няжняя  '-' - любая")
+        self._update_monday_table()
+        self._update_tuesday_table()
+        self._update_wednesday_table()
+        self._update_thursday_table()
+        self._update_friday_table()
 
     def _change_teacher_table(self, rown, a):
         row = list()
@@ -421,11 +431,11 @@ class Window(QWidget):
                 row.append(a.item(rown, i).text())
             except:
                 row.append(None)
-        try:
-            self.cursor.execute("update teacher set full_name = '" + row[0] + "' where id = " + row[2] + ";")
-            self.conn.commit()
-        except:
-            QMessageBox.about(self, "Error", "Enter all fields")
+            try:
+                self.cursor.execute("update teacher set full_name = '" + row[0] + "' where id = " + row[2] + ";")
+                self.conn.commit()
+            except:
+                QMessageBox.about(self, "Error", "Enter all fields")
 
     def _del_from_time_table(self, rown, a):
         row = list()
@@ -461,16 +471,27 @@ class Window(QWidget):
 
     def _del_from_subject(self, rown, a):
         row = list()
+        A = list()
+        B = list()
         for i in range(a.columnCount()):
             try:
                 row.append(a.item(rown, i).text())
             except:
                 row.append(None)
-        try:
-            self.cursor.execute("delete from subject where name = '" + row[0] + "';")
-            self.conn.commit()
-        except:
-            QMessageBox.about(self, "Error", "Enter all fields")
+        for i in range(self.teacher_table.rowCount()):
+            try:
+                A.append(self.teacher_table.item(i, 1).text())
+            except:
+                row.append(None)
+        if row[0] in A:
+            QMessageBox.about(self, "Error",
+                              "Нельзя удалить предмет, пока он находится в расписании или в преподавателях")
+        else:
+            try:
+                self.cursor.execute("delete from subject where name = '" + row[0] + "';")
+                self.conn.commit()
+            except:
+                QMessageBox.about(self, "Error", "Нельзя удалить предмет, пока он находится в расписании или в преподавателях")
         self._update_subject_table()
 
     def _add_time_table(self, rown, a):
@@ -486,40 +507,44 @@ class Window(QWidget):
                 A.append(self.subject_table.item(i, 0).text())
             except:
                 row.append(None)
-        if row[1] in A:
-            try:
-                if a == self.monday_table:
-                    self.cursor.execute(
-                        "insert into time_table(day, pos, subject, start_time) values('Пн', '" + row[0] + "', '" + row[
-                            1] + "', '" + row[2] + "');")
-                    self.conn.commit()
-                elif a == self.tuesday_table:
-                    self.cursor.execute(
-                        "insert into time_table(day, pos, subject, start_time) values('Вт', '" + row[0] + "', '" + row[
-                            1] + "', '" + row[2] + "');")
-                    self.conn.commit()
-                elif a == self.wednesday_table:
-                    self.cursor.execute(
-                        "insert into time_table(day, pos, subject, start_time) values('Ср', '" + row[0] + "', '" + row[
-                            1] + "', '" + row[2] + "');")
-                    self.conn.commit()
-                elif a == self.thursday_table:
-                    self.cursor.execute(
-                        "insert into time_table(day, pos, subject, start_time) values('Чт', '" + row[0] + "', '" + row[
-                            1] + "', '" + row[2] + "');")
-                    self.conn.commit()
-                elif a == self.friday_table:
-                    self.cursor.execute(
-                        "insert into time_table(day, pos, subject, start_time) values('Пт', '" + row[0] + "', '" + row[
-                            1] + "', '" + row[2] + "');")
-                    self.conn.commit()
-            except:
-                QMessageBox.about(self, "Error", "Enter all fields")
-            self._update_monday_table()
-            self._update_tuesday_table()
-            self._update_wednesday_table()
-            self._update_thursday_table()
-            self._update_friday_table()
+        if row[1] in A and row[1] != '':
+            if row[0] == '-' or row[0] == 'н' or row[0] == 'в':
+                if row[2] == '9:30' or row[2] == '11:20' or row[2] == '13:10' or row[2] == '15:25' or row[2] == '17:15':
+                    try:
+                        if a == self.monday_table:
+                            self.cursor.execute(
+                                "insert into time_table(day, pos, subject, start_time) values('Пн', '" + row[0] + "', '" + row[
+                                    1] + "', '" + row[2] + "');")
+                            self.conn.commit()
+                        elif a == self.tuesday_table:
+                            self.cursor.execute(
+                                "insert into time_table(day, pos, subject, start_time) values('Вт', '" + row[0] + "', '" + row[
+                                    1] + "', '" + row[2] + "');")
+                            self.conn.commit()
+                        elif a == self.wednesday_table:
+                            self.cursor.execute(
+                                "insert into time_table(day, pos, subject, start_time) values('Ср', '" + row[0] + "', '" + row[
+                                    1] + "', '" + row[2] + "');")
+                            self.conn.commit()
+                        elif a == self.thursday_table:
+                            self.cursor.execute(
+                                "insert into time_table(day, pos, subject, start_time) values('Чт', '" + row[0] + "', '" + row[
+                                    1] + "', '" + row[2] + "');")
+                            self.conn.commit()
+                        elif a == self.friday_table:
+                            self.cursor.execute(
+                                "insert into time_table(day, pos, subject, start_time) values('Пт', '" + row[0] + "', '" + row[
+                                    1] + "', '" + row[2] + "');")
+                            self.conn.commit()
+                    except:
+                        QMessageBox.about(self, "Error", "Enter all fields")
+                    self._update_monday_table()
+                    self._update_tuesday_table()
+                    self._update_wednesday_table()
+                    self._update_thursday_table()
+                    self._update_friday_table()
+                else: QMessageBox.about(self, "Error", "Введите стандартизированое время")
+            else: QMessageBox.about(self, "Error", "Введите положение недели 'в' - верхняя 'н' - няжняя  '-' - любая")
         else: QMessageBox.about(self, "Error", "Такого предмета нет в БД")
 
     def _add_teacher(self, rown, a):

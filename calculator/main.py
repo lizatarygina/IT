@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QApplication, QWidget, QLineEdit, QPushButton
+from PyQt5.QtWidgets import QApplication, QWidget, QLineEdit, QPushButton, QMessageBox
 import sys
 
 calc = 0
@@ -6,22 +6,23 @@ pd = 0
 numb = ''
 
 
-def prov():
-    global calc, pd, numb
-    if pd == 0:
-        calc += float(numb)
-    elif pd == 1:
-        calc += float(numb)
-    elif pd == 2:
-        calc -= float(numb)
-    elif pd == 3:
-        calc *= float(numb)
-    elif pd == 4:
-        calc /= float(numb)
-    numb = ''
-
-
 class Window(QWidget):
+    def prov(self):
+        global calc, pd, numb
+        if pd == 0:
+            calc += float(numb)
+        elif pd == 1:
+            calc += float(numb)
+        elif pd == 2:
+            calc -= float(numb)
+        elif pd == 3:
+            calc *= float(numb)
+        elif pd == 4:
+            try:
+                calc /= float(numb)
+            except:
+                QMessageBox.about(self, "Error", "На ноль делить нельзя")
+        numb = ''
 
     def __init__(self):
         super(Window, self).__init__()
@@ -87,7 +88,7 @@ class Window(QWidget):
 
     def click_event_e(self):
         global pd, numb, calc
-        prov()
+        self.prov()
         self.le.setText(str(calc))
         pd = 0
         numb = str(calc)
@@ -95,25 +96,25 @@ class Window(QWidget):
 
     def click_event_p(self):
         global pd
-        prov()
+        self.prov()
         self.le.setText(self.le.text() + '+')
         pd = 1
 
     def click_event_m(self):
         global pd
-        prov()
+        self.prov()
         self.le.setText(self.le.text() + '-')
         pd = 2
 
     def click_event_y(self):
         global pd
-        prov()
+        self.prov()
         self.le.setText(self.le.text() + '*')
         pd = 3
 
     def click_event_d(self):
         global pd
-        prov()
+        self.prov()
         self.le.setText(self.le.text() + '/')
         pd = 4
 

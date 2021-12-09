@@ -54,7 +54,7 @@ def reply_message(message):
         cursor.execute(
             "select time_table.subject, time_table.start_time, teacher.full_name from time_table join teacher on "
             "teacher.subject = time_table.subject where day = '" + a + "' and (pos = '-' or pos = '" + b + "') "
-            "order by time_table.id;")
+            "order by time_table.start_time;")
         row = list(cursor.fetchall())
         mess = ''
         for i in row:
@@ -99,7 +99,7 @@ def reply_message(message):
         markup.add(btn4)
         markup.add(btn5)
         markup.add(btn6)
-        bot.send_message(message.chat.id, "Выбери день недели", reply_markup=markup)
+        bot.send_message(message.chat.id, "Выберете день недели", reply_markup=markup)
     if message.text == "Понедельник":
         week_pos(day[0])
     if message.text == "Вторник":
